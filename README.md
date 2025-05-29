@@ -151,7 +151,7 @@ df.describe()
 
 ![image](https://github.com/user-attachments/assets/4302bb2c-6f99-47f8-b0dd-0f6dbb426725)
 
-Diagram diatas merupakan manalisis dan menampilkan distribusi skor anime dalam bentuk histogram dengan beberapa hasil analisis yaitu :
+Diagram diatas merupakan analisis dan menampilkan distribusi skor anime dalam bentuk histogram dengan beberapa hasil analisis yaitu :
 - Skor anime berkisar antara 7.5–9.2, menandakan tidak ada anime dengan skor sangat rendah.
 - Rata-rata skor adalah 7.91, menjadi patokan untuk menilai apakah suatu anime di atas atau di bawah standar umum.
 - Sebagian besar anime memiliki skor 7.6–8.0, menunjukkan bahwa skor “cukup bagus” adalah yang paling umum.
@@ -162,7 +162,7 @@ Diagram diatas merupakan manalisis dan menampilkan distribusi skor anime dalam b
 
 ![image](https://github.com/user-attachments/assets/6b04b2fd-4751-4ad0-91da-cc95ec950a37)
 
-Diagram diatas merupakan manalisis dan menampilkan distribusi genre anime dalam bentuk histogram dengan beberapa hasil analisis yaitu :
+Diagram diatas merupakan analisis dan menampilkan distribusi genre anime dalam bentuk histogram dengan beberapa hasil analisis yaitu :
 - Genre paling umum adalah Comedy, dengan jumlah anime terbanyak (lebih dari 750), menandakan genre ini sangat populer dan sering diproduksi.
 - Action dan Drama juga dominan, menunjukkan minat tinggi terhadap cerita penuh aksi dan emosi.
 - Shounen, Adventure, Romance, dan Fantasy juga memiliki jumlah signifikan, mencerminkan minat terhadap cerita petualangan dan tema remaja.
@@ -173,7 +173,7 @@ Diagram diatas merupakan manalisis dan menampilkan distribusi genre anime dalam 
 
 ![image](https://github.com/user-attachments/assets/b4f5bf0f-4bdf-40a2-93bb-37c017523c35)
 
-Diagram diatas merupakan manalisis dan menampilkan distribusi score dan members anime dalam bentuk histogram dengan beberapa hasil analisis yaitu :
+Diagram diatas merupakan analisis dan menampilkan distribusi score dan members anime dalam bentuk histogram yaitu :
 
 **Distribusi Scored By (Jumlah Pemberi Skor)**
 - Grafik menunjukkan bahwa sebagian besar anime hanya mendapat skor dari sedikit pengguna.
@@ -186,3 +186,444 @@ Diagram diatas merupakan manalisis dan menampilkan distribusi score dan members 
 - Sebagian besar anime memiliki jumlah member yang rendah, terutama di bawah 300.000.
 - Hanya sedikit anime yang sangat populer dan memiliki member lebih dari 1 juta.
 - Ini menandakan bahwa minat pengguna lebih terpusat pada beberapa anime tertentu saja.
+
+##### Multivariate Analysis
+
+**Distribusi Rata-rata Skor per Genre**
+
+![image](https://github.com/user-attachments/assets/1fe5f5d3-a93c-4f4b-b586-ab603b49e803)
+
+Diagram diatas merupakan analisis dan menampilkan Distribusi Rata-rata Skor per Genre anime yaitu :
+- Mayoritas anime memiliki jumlah pemberi skor dan member yang rendah, hanya sedikit yang sangat populer.
+- Beberapa anime memiliki jumlah member tinggi, namun tidak selalu mendapat skor rata-rata tinggi.
+- Genre seperti Comedy, Action, dan Romance paling banyak diproduksi, menunjukkan popularitas massal.
+- Genre Samurai, Thriller, dan Vampire memiliki skor rata-rata tertinggi, meskipun tidak sepopuler genre umum.
+- Genre Drama, Mystery, dan Psychological juga cenderung mendapat skor tinggi, menandakan kualitas cerita yang kuat.
+- Genre seperti Harem, Kids, dan Music memiliki skor terendah, meskipun masih memiliki audiens tersendiri.
+- Secara umum, genre populer belum tentu berkualitas tinggi, dan genre berkualitas belum tentu populer.
+
+## **4. Data Preparation**
+##### Handling Missing Value
+Sebagaimana setelah melakukan pengecekan data dapat kita lihat bahwa ada 9 data yang mengalami missing value sehingga diperlukan adanya penghapusan data duplikat menggunakan fungsi `df.isnull().sum()`
+```
+missing_values_after = df.isnull().sum()
+print("Missing values after potential handling:")
+missing_values_after
+```
+![image](https://github.com/user-attachments/assets/7dd6bf12-3e9b-4f1e-8a03-fae0fd5d4927)
+
+#### Text Preprocessing
+Pada tahap ini saya membuat fungsi clean_title() untuk membersihkan judul anime dari karakter khusus menggunakan re.sub() dengan regex pattern yang hanya menyisakan huruf, angka, dan spasi. Fungsi ini diterapkan ke seluruh kolom 'Title' menggunakan apply() untuk menghilangkan simbol-simbol seperti tanda baca, karakter unicode, atau tanda khusus lainnya. Hasilnya adalah judul yang lebih bersih dan konsisten untuk analisis lebih lanjut.
+
+![image](https://github.com/user-attachments/assets/8298c7a5-ed01-4a3a-a04f-b3009689d08b)
+
+```
+import re
+
+def clean_title(title):
+    if isinstance(title, str):
+        cleaned_title = re.sub(r'[^a-zA-Z0-9\s]', '', title)
+        return cleaned_title.strip()
+    else:
+        return title
+
+df['Title'] = df['Title'].apply(clean_title)
+
+# Contoh output setelah dibersihkan
+print("\nContoh Judul Setelah Dibersihkan:")
+print(df['Title'].head())
+```
+#### Pengelompokan Tipe Data
+pada tahapan ini saya mengecek tipe data terhadap kolom yang akan di gunakan untuk permodelan, disini saya menggunakan `df.select_dtypes(include=['number']).columns.tolist()` dan `df.select_dtypes(include=['object']).columns.tolist()`. dapat dilihat pada output dibawah kode tersebut apa saja kolom dengan tipe data numerik dam kolom dengan data kategorikal.
+
+![image](https://github.com/user-attachments/assets/0015f3b7-c179-424e-a7f3-90da27d0b58a)
+
+```
+# Mengecek tipe data setiap kolom dan mengelompokkannya
+num_col = df.select_dtypes(include=['number']).columns.tolist()
+cat_col = df.select_dtypes(include=['object']).columns.tolist()
+
+print("Kolom Numerikal:")
+print(num_col)
+print("\nKolom Kategorikal:")
+print(cat_col)
+```
+
+## **5. Model and Result**
+#### Content-based Filtering
+
+Pada tahapan modeling ini, akan digunakan sistem rekomendasi berdasarkan pendekatan Content-Based Filtering dimana nantinya sistem akan merekomendasikan judul anime dyang memiliki kesamaan genre dengan judul anime yang diinginkan oleh user. Sistem akan menampilkan 5 judul anime dengan kemiripan genre yang sama dengan judul anime pilihan pengguna.
+
+#### TF-IDF
+
+TF-IDF pada tahapan ini digunakan untuk mengubah teks pada kolom genre menjadi angka dengan memberikan bobot tinggi pada genre yang jarang muncul dan bobot rendah pada genre yang umum, sehingga bisa mengidentifikasi keunikan setiap anime berdasarkan kombinasi genrenya.
+
+**TF-IDF Vectorizer dan DataFrame Conversion**
+
+**TF-IDF Vectorizer dan DataFrame Conversion** adalah proses lengkap yang meliputi inisialisasi TF-IDF vectorizer, training dengan data genre, ekstraksi fitur, transformasi teks menjadi matrix numerik, dan konversi ke format DataFrame pandas untuk analisis yang lebih mudah. Proses ini mengubah data teks genre yang tidak terstruktur menjadi representasi numerik yang dapat digunakan untuk machine learning dan analisis data.
+
+Proses Kerja Konversi:
+
+- **Vectorizer Initialization**: Menginisialisasi TfidfVectorizer dengan konfigurasi default untuk memproses data teks genre
+- **Training Process**: Melatih vectorizer dengan data genre menggunakan fit() untuk membangun vocabulary dan menghitung IDF values
+- **Feature Extraction**: Mengekstraksi nama-nama fitur yang telah dipelajari dari corpus menggunakan get_feature_names_out()
+- **TF-IDF Transformation**: Mengubah teks genre menjadi sparse matrix TF-IDF menggunakan fit_transform()
+- **Dense Conversion**: Mengkonversi sparse matrix menjadi dense matrix menggunakan todense()
+- **DataFrame Creation**: Membuat DataFrame pandas dengan kolom sebagai fitur dan baris sebagai dokumen
+- **Sampling**: Mengambil sample data secara acak untuk visualisasi dan analisis
+
+Parameter:
+
+- **vectorizer**: TfidfVectorizer() dengan parameter default
+- **training_data**: df['Genres'] sebagai input untuk pembelajaran vocabulary
+- **tfidf_matrix**: Sparse matrix hasil transformasi TF-IDF
+- **dense_data**: tfidf_matrix.todense() untuk konversi ke format dense
+- **columns**: vectorizer.get_feature_names_out() sebagai nama kolom DataFrame
+- **index**: df['Title'] untuk identifikasi setiap dokumen/film
+- **sample_size**: min(15, len(tfidf_dataframe)) untuk kolom dan min(8, len(tfidf_dataframe)) untuk baris
+
+Tahapan Penyusunan Model:
+
+1. **Inisialisasi**: TfidfVectorizer() dipanggil untuk membuat instance vectorizer dengan konfigurasi default
+2. **Training**: vectorizer.fit(df['Genres']) melatih model dengan data genre untuk membangun vocabulary dan menghitung IDF
+3. **Feature Extraction**: get_feature_names_out() mengekstraksi nama fitur yang telah dipelajari dari corpus
+4. **Matrix Creation**: fit_transform(df['Genres']) mengubah data genre menjadi sparse matrix TF-IDF
+5. **Dense Conversion**: todense() mengkonversi sparse matrix menjadi dense matrix untuk kompatibilitas DataFrame
+6. **DataFrame Construction**: pd.DataFrame() membuat DataFrame dengan dense matrix sebagai data, feature names sebagai kolom, dan titles sebagai index
+7. **Sampling**: sample() digunakan untuk mengambil subset data secara acak untuk visualisasi
+
+Kelebihan:
+
+- **Efisiensi Pemrosesan**: TF-IDF memberikan representasi numerik yang efektif untuk data teks genre
+- **Vocabulary Learning**: Secara otomatis membangun vocabulary dari corpus tanpa preprocessing manual
+- **Feature Interpretability**: Nama fitur yang diekstraksi mudah dipahami dan diinterpretasikan
+- **DataFrame Compatibility**: Format DataFrame memudahkan visualisasi, filtering, dan manipulasi data
+- **Sampling Flexibility**: Kemampuan sampling memungkinkan eksplorasi data besar dengan efisien
+- **Integration Ready**: Siap diintegrasikan dengan algoritma machine learning dan analisis lanjutan
+
+Kekurangan:
+
+- **Memory Intensive**: Konversi ke dense matrix dan DataFrame menggunakan memori yang sangat besar
+- **Performance Impact**: Proses todense() dapat lambat untuk dataset dengan dimensi tinggi
+- **Sparse Matrix Loss**: Kehilangan efisiensi sparse matrix dalam hal storage dan komputasi
+- **Scalability Issues**: Tidak scalable untuk dataset dengan jutaan dokumen atau fitur
+- **Redundant Processing**: fit_transform() dipanggil dua kali yang menyebabkan pemrosesan berulang
+- **Limited Semantic Understanding**: TF-IDF tidak menangkap hubungan semantik antar kata dalam genre
+
+Implementasi:
+
+- **Vectorizer Setup**: TfidfVectorizer() diinisialisasi dengan parameter default untuk fleksibilitas maksimal
+- **Model Training**: vectorizer.fit() dan fit_transform() digunakan untuk pembelajaran dan transformasi data genre
+- **Feature Analysis**: get_feature_names_out() mengekstraksi dan menampilkan fitur-fitur genre yang telah dipelajari
+- **Matrix Conversion**: todense() mengkonversi sparse matrix menjadi dense untuk kompatibilitas DataFrame
+- **DataFrame Creation**: pd.DataFrame() membuat struktur tabular dengan titles sebagai index dan features sebagai kolom
+- **Data Sampling**: sample() dengan parameter axis=0 dan axis=1 mengambil subset baris dan kolom secara acak untuk preview
+- **Visualization Ready**: Hasil akhir berupa DataFrame yang siap untuk analisis, visualisasi, dan pemrosesan lebih lanjut
+
+  
+---
+```
+# Inisialisasi dan Training TF-IDF Vectorizer
+vectorizer = TfidfVectorizer()
+
+# Melatih vectorizer dengan data genre
+vectorizer.fit(df['Genres'])
+
+# Melihat fitur yang telah diekstraksi
+feature_names = vectorizer.get_feature_names_out()
+print(f"Jumlah fitur genre: {len(feature_names)}")
+print("Contoh fitur genre:")
+print(feature_names[:20])
+```
+![image](https://github.com/user-attachments/assets/1cb84032-80ae-4e70-baa3-1045219ebdf2)
+
+---
+```
+# Mengubah teks genre menjadi representasi numerik TF-IDF
+tfidf_matrix = vectorizer.fit_transform(df['Genres'])
+print(f"Dimensi TF-IDF matrix: {tfidf_matrix.shape}")
+```
+![image](https://github.com/user-attachments/assets/df4fd51b-d4de-4d69-bdc8-1c992e6bd5a5)
+
+---
+```
+# Konversi ke DataFrame untuk visualisasi yang lebih baik
+tfidf_dataframe = pd.DataFrame(
+    tfidf_matrix.todense(), 
+    columns=vectorizer.get_feature_names_out(),
+    index=df['Title']
+)
+
+# Menampilkan sample dari matrix TF-IDF
+print("Sample TF-IDF Matrix:")
+sample_df = tfidf_dataframe.sample(n=min(15, len(tfidf_dataframe)), axis=1).sample(n=min(8, len(tfidf_dataframe)), axis=0)
+sample_df
+```
+![image](https://github.com/user-attachments/assets/7fdfa0a9-efd4-4e2e-9b55-648140b7d78f)
+
+---
+
+#### Cosine Similarity
+**Cosine Similarity Matrix Computation** adalah proses perhitungan kesamaan antar dokumen (anime) berdasarkan representasi TF-IDF genre menggunakan metrik cosine similarity, kemudian mengkonversinya menjadi DataFrame untuk analisis dan visualisasi yang lebih mudah. Proses ini menghasilkan matrix simetris yang menunjukkan tingkat kesamaan genre antar anime dengan nilai berkisar dari 0 (tidak sama) hingga 1 (identik).
+
+Proses Kerja Perhitungan:
+
+- Matrix Input Processing: Menggunakan TF-IDF matrix sebagai input untuk perhitungan cosine similarity
+- Cosine Calculation: Menghitung cosine angle antara setiap pasangan vector anime dalam ruang TF-IDF
+- Similarity Matrix Generation: Membuat matrix simetris n×n dimana n adalah jumlah anime
+- Normalization: Hasil similarity dinormalisasi dalam rentang 0-1 berdasarkan cosine angle
+- DataFrame Conversion: Mengkonversi numpy array menjadi DataFrame pandas dengan proper indexing
+- Index Assignment: Menetapkan nama anime sebagai index dan column untuk kemudahan identifikasi
+- Sampling Process: Mengambil subset matrix secara acak untuk visualisasi dan analisis
+
+Parameter:
+
+- input_matrix: tfidf_matrix sebagai basis perhitungan similarity
+- similarity_function: cosine_similarity dari sklearn.metrics.pairwise
+- output_shape: (n_samples, n_samples) matrix simetris
+- data_source: similarity_matrix hasil perhitungan cosine
+- index_columns: df['Title'] untuk penamaan baris dan kolom DataFrame
+- sample_parameters: min(6, len(similarity_df)) untuk kolom dan min(8, len(similarity_df)) untuk baris
+- similarity_range: nilai antara 0.0 hingga 1.0
+
+Tahapan Penyusunan Model:
+
+- Input Preparation: TF-IDF matrix yang telah dibuat sebelumnya digunakan sebagai input untuk perhitungan similarity
+- Cosine Computation: cosine_similarity(tfidf_matrix) menghitung kesamaan cosine antar semua pasangan anime
+- Matrix Validation: Memeriksa dimensi similarity matrix untuk memastikan hasil perhitungan benar
+- DataFrame Construction: pd.DataFrame() mengkonversi similarity matrix menjadi format DataFrame
+- Index Setting: df['Title'] digunakan sebagai index dan columns untuk identifikasi anime
+- Dimension Verification: Memeriksa shape DataFrame untuk konfirmasi struktur data
+Sample Generation: sample() digunakan untuk mengambil subset matrix secara acak untuk preview dan analisis
+
+Kelebihan:
+
+- Matrix similarity yang dihasilkan bersifat simetris dan konsisten
+- Normalized Values: Nilai similarity dalam rentang 0-1 yang mudah diinterpretasikan
+- Menghitung similarity untuk semua pasangan anime sekaligus
+- DataFrame Integration: Format DataFrame memudahkan filtering, sorting, dan analisis data
+-Sampling memungkinkan preview data besar tanpa load seluruh matrix
+-  Hasil dapat langsung digunakan untuk sistem rekomendasi
+
+
+Kekurangan:
+
+- Membutuhkan memory O(n²) untuk menyimpan full similarity matrix
+- Perhitungan cosine untuk semua pasangan bisa lambat pada dataset besar
+- Matrix simetris menyimpan informasi duplikat (upper dan lower triangle)
+- Menggunakan dense matrix yang tidak efisien untuk sparse similarity
+- Tidak scalable untuk dataset dengan puluhan ribu anime
+- Hanya mempertimbangkan genre tanpa faktor lain seperti rating atau tahun
+- Tidak menangkap nuansa atau bobot relatif antar genre
+
+Implementasi:
+
+- Similarity Calculation: cosine_similarity(tfidf_matrix) menghitung kesamaan berdasarkan angle antar vector TF-IDF
+- Matrix Shape Validation: Menampilkan shape matrix untuk verifikasi bahwa hasil perhitungan sesuai ekspektasi
+- DataFrame Transformation: pd.DataFrame() dengan parameter similarity_matrix, index, dan columns untuk struktur data yang rapi
+- Dual Indexing: Menggunakan df['Title'] sebagai index dan columns untuk kemudahan cross-reference anime
+- Dimension Display: Menampilkan shape DataFrame untuk konfirmasi struktur dan ukuran data
+- Random Sampling: sample() dengan axis=0 dan  axis=1 untuk mengambil subset baris dan kolom secara acak
+- Preview Generation: Menghasilkan sample similarity matrix yang representatif untuk analisis awal dan validasi hasil
+---
+```
+# Menghitung kesamaan cosine antar anime berdasarkan genre
+similarity_matrix = cosine_similarity(tfidf_matrix)
+print(f"Shape similarity matrix: {similarity_matrix.shape}")
+```
+![image](https://github.com/user-attachments/assets/00de8007-4559-4da3-931f-df5fb34c2e7b)
+
+---
+```
+# Mengubah similarity matrix menjadi DataFrame dengan index dan kolom nama anime
+similarity_df = pd.DataFrame(
+    similarity_matrix, 
+    index=df['Title'], 
+    columns=df['Title']
+)
+
+print(f'Dimensi similarity dataframe:')
+similarity_df.shape
+
+# Melihat contoh similarity matrix
+print("\nContoh Similarity Matrix:")
+sample_similarity = similarity_df.sample(n=min(6, len(similarity_df)), axis=1).sample(n=min(8, len(similarity_df)), axis=0)
+sample_similarity
+```
+
+![image](https://github.com/user-attachments/assets/15f46c28-b3f8-4f8b-81e7-ec53acbb2009)
+
+---
+
+#### Membuat Fungsi Sistem Rekomendasi Anime
+
+Pada tahapan ini saya membuat fungsi rekomendasi anime yang mengimplementasikan sistem rekomendasi berbasis content-based filtering menggunakan cosine similarity untuk memberikan rekomendasi anime berdasarkan kesamaan genre. 
+
+Fungsi ini mengambil input anime tertentu dan mengembalikan daftar anime yang memiliki genre paling mirip berdasarkan perhitungan similarity matrix yang telah dibuat sebelumnya.
+
+Proses Kerja Rekomendasi:
+
+- Input Validation: Mengecek keberadaan anime yang diminta dalam dataset similarity matrix
+- Similarity Extraction: Mengambil row similarity scores untuk anime target dari  similarity DataFrame
+- Array Conversion: Mengkonversi pandas Series menjadi numpy array untuk operasi numerik yang efisien
+- Top-N Selection: Menggunakan argpartition untuk mendapatkan indices dengan similarity score tertinggi
+- Index Filtering: Menghapus anime input dari hasil rekomendasi untuk menghindari self-recommendation
+- Data Merging: Menggabungkan hasil rekomendasi dengan informasi lengkap anime (genre, score)
+Score Integration: Menambahkan similarity score ke dalam hasil final untuk transparansi
+
+Parameter:
+
+- anime_title: string nama anime yang menjadi basis rekomendasi
+- similarity_data: similarity_df sebagai source matrix kesamaan (default)
+- anime_data: df[['Title', 'Genres', 'Score']] untuk informasi lengkap anime
+- num_recommendations: integer jumlah rekomendasi yang diinginkan (default=5)
+- similarity_scores: numpy array hasil konversi dari pandas Series
+- top_indices: hasil argpartition untuk indices dengan similarity tertinggi
+- recommended_titles: pandas Index berisi nama-nama anime yang direkomendasikan
+
+Tahapan Penyusunan Model:
+
+- Input Validation: Mengecek apakah anime_title ada dalam similarity_data.index menggunakan conditional check
+- Data Extraction: similarity_data.loc[anime_title].to_numpy() mengambil dan mengkonversi similarity scores
+- Efficient Sorting: argpartition() digunakan untuk mendapatkan top-k indices tanpa full sorting
+- Index Selection: Slicing dengan [-1:-(num_recommendations+2):-1] untuk mengambil indices dengan similarity tertinggi
+- Title Mapping: similarity_data.columns[most_similar_indices] mengkonversi indices menjadi nama anime
+- Self-Removal: drop(anime_title, errors='ignore') menghapus anime input dari hasil rekomendasi
+- Data Integration: merge() menggabungkan recommended titles dengan informasi lengkap anime
+- Score Addition: List comprehension menambahkan similarity score untuk setiap rekomendasi
+
+Kelebihan:
+
+- Fast Retrieval: Menggunakan argpartition yang lebih efisien dibanding full sorting untuk top-n selection
+- Robust Error Handling: Menangani kasus anime tidak ditemukan dengan pesan error yang informatif
+- Comprehensive Output: Mengembalikan informasi lengkap termasuk genre, score, dan similarity score
+- Flexible Parameters: Mendukung kustomisasi jumlah rekomendasi dan data source
+- Self-Exclusion: Otomatis menghapus anime input dari hasil rekomendasi
+- Transparent Scoring: Menyertakan similarity score untuk evaluasi kualitas rekomendasi
+- Memory Efficient: Tidak memuat seluruh dataset ke memory, hanya mengakses data yang diperlukan
+
+Kekurangan:
+
+- Single Criteria: Hanya berdasarkan similarity genre, tidak mempertimbangkan faktor lain
+- Cold Start Problem: Tidak dapat memberikan rekomendasi untuk anime baru yang tidak ada dalam dataset
+- Genre Bias: Terlalu bergantung pada representasi genre yang mungkin tidak akurat
+- No Personalization: Tidak mempertimbangkan preferensi individual pengguna
+
+Implementasi:
+
+- Function Definition: get_anime_recommendations() dengan parameter yang fleksibel dan default values
+- Existence Check: Conditional statement untuk validasi keberadaan anime dalam similarity matrix
+- Efficient Computation: Kombinasi to_numpy(), argpartition(), dan slicing untuk operasi yang optimal
+- Data Manipulation: Penggunaan pandas operations seperti loc, drop, merge, dan head untuk data processing
+Score Integration: List comprehension untuk menambahkan similarity score ke hasil akhir
+- Return Handling: Mengembalikan error message untuk anime tidak ditemukan atau DataFrame untuk hasil valid
+- Modular Design: Fungsi dapat digunakan dengan berbagai similarity matrix dan anime dataset yang berbeda
+---
+```
+def get_anime_recommendations(anime_title, similarity_data=similarity_df, anime_data=df[['Title', 'Genres', 'Score']], num_recommendations=5):    
+    # Mengecek apakah anime ada dalam dataset
+    if anime_title not in similarity_data.index:
+        return f"Anime '{anime_title}' tidak ditemukan dalam dataset"
+    
+    # Mengambil nilai similarity dan mengurutkannya
+    similarity_scores = similarity_data.loc[anime_title].to_numpy()
+    
+    # Menggunakan argpartition untuk mendapatkan index dengan similarity tertinggi
+    top_indices = similarity_scores.argpartition(range(-1, -num_recommendations-1, -1))
+    
+    # Mengambil anime dengan similarity tertinggi
+    most_similar_indices = top_indices[-1:-(num_recommendations+2):-1]
+    recommended_titles = similarity_data.columns[most_similar_indices]
+    
+    # Menghapus anime input agar tidak muncul dalam rekomendasi
+    recommended_titles = recommended_titles.drop(anime_title, errors='ignore')
+    
+    # Menggabungkan dengan informasi anime lengkap
+    recommendations = pd.DataFrame(recommended_titles, columns=['Title']).merge(
+        anime_data, on='Title', how='left'
+    ).head(num_recommendations)
+    
+    # Menambahkan kolom similarity score
+    recommendations['Similarity_Score'] = [similarity_data.loc[anime_title, title] for title in recommendations['Title']]
+    
+    return recommendations
+```
+---
+#### Top 5 Recommendation
+
+Untuk menjalankan kodenya cukup mengisi judul anime yang diinginkan dan memanggil fungsi get_anime_recommendations() seperti contoh dibawah
+
+```
+get_anime_recommendations('Shingeki no Kyojin')
+```
+![image](https://github.com/user-attachments/assets/4f39b1ab-28d2-48f5-8013-dfb540dfe040)
+
+---
+
+## Evaluation
+### Evaluasi Hasil
+Evaluasi model yang dilakukan untuk prediksi data ini menggunakan metrik berupa ***Cosine Similarity dan Avarage Genre Similarity***
+
+| **Aspek**                | **Penjelasan**                                                                                      |
+|--------------------------|-----------------------------------------------------------------------------------------------------|
+| **Cosine Similarity**    | Mengukur kesamaan genre antara anime target dengan anime yang direkomendasikan.                 |
+|                          | Range nilai: 0-1 (0 = tidak mirip, 1 = identik).                                                   |
+|                          | Dihitung menggunakan `cosine_similarity(target_vector, vectors_rec)`.                            |
+| **Average Genre Similarity** | Rata-rata cosine similarity dari semua rekomendasi yang diberikan.                          |
+|                          | Dikonversi ke persentase untuk interpretasi yang lebih mudah.                                      |
+|                          | menggunakan fungsi `genre_similarities.mean() * 100`.                                                          |
+| **Kelebihan**            | Sesuai dengan problem statement (rekomendasi berdasarkan genre).                                |
+|                          | Mudah diinterpretasi.                                                                               |
+|                          | Memberikan feedback langsung tentang kualitas sistem.                                               |
+| **Keterbatasan**         | Hanya fokus pada genre, tidak mempertimbangkan rating atau popularitas.                         |
+|                          | Tidak ada ground truth untuk validasi objektif.                                                     |
+```
+def evaluate_recommendations(anime_title, tfidf_matrix, df, similarity_df):
+    if anime_title not in df['Title'].values:
+        return f"Anime '{anime_title}' tidak ditemukan dalam dataset."
+
+    # Ambil index & vektor TF-IDF dari anime target
+    idx_target = df[df['Title'] == anime_title].index[0]
+    target_vector = tfidf_matrix[idx_target]
+
+    # Dapatkan rekomendasi
+    recommendations = get_anime_recommendations(anime_title, similarity_data=similarity_df, anime_data=df[['Title', 'Genres', 'Score']], num_recommendations=5)
+    
+    # Filter out jika rekomendasi kosong atau semua dari seri/franchise yang sama
+    if recommendations.empty:
+        return "Rekomendasi kosong."
+    
+    # Ambil index rekomendasi dalam tfidf_matrix
+    indices_rec = df[df['Title'].isin(recommendations['Title'])].index
+    vectors_rec = tfidf_matrix[indices_rec]
+
+    # Hitung cosine similarity genre antar vektor
+    genre_similarities = cosine_similarity(target_vector, vectors_rec)[0]
+
+    # Tambahkan skor ke dataframe hasil
+    recommendations['Genre_Similarity'] = [round(score, 2) for score in genre_similarities]
+    
+    # Hitung rata-rata similarity sebagai "akurasi"
+    average_score = round(genre_similarities.mean() * 100, 2)
+    print(f" Genre Similarity Average: {average_score}%")
+
+    return recommendations
+
+```
+Untuk melakukan evaluasi dan melihat akurasi judul anime yang direkomendasikan dapat dilakukan dengan mengisi judul anime yang diinginkan dan memanggil fungsi `evaluate_recommendations("Judul Anime", tfidf_matrix, df, similarity_df)`
+
+contoh :
+```
+evaluate_recommendations("Shingeki no Kyojin", tfidf_matrix, df, similarity_df)
+```
+Hasil Output : 
+
+![image](https://github.com/user-attachments/assets/aa96c007-2942-478d-9f8f-97be5f4cca9e)
+
+---
+
+
+
+
+
+
