@@ -560,7 +560,8 @@ get_anime_recommendations('Shingeki no Kyojin')
 
 ---
 
-## Evaluation
+
+## **5. Evaluation**
 ### Evaluasi Hasil
 Evaluasi model yang dilakukan untuk prediksi data ini menggunakan metrik berupa ***Cosine Similarity dan Avarage Genre Similarity***
 
@@ -622,8 +623,51 @@ Hasil Output :
 
 ---
 
+ 
+### **Evaluasi Bisnis** 
+ 
+**Problem Solving** 
+ 
+1. **Bagaimana cara membangun sistem rekomendasi yang membantu penonton menemukan anime sesuai preferensi mereka?** 
+   Problem berhasil dijawab melalui pengembangan sistem rekomendasi berbasis content-based filtering dengan pendekatan berikut: 
+ 
+   * Representasi data genre dalam bentuk numerik menggunakan **TF-IDF Vectorizer** 
+   * Pengukuran kesamaan antar anime dengan **Cosine Similarity** 
+   * Implementasi fungsi **`get_anime_recommendations()`** untuk menghasilkan top-N rekomendasi anime berdasarkan input judul 
+   * Evaluasi sistem rekomendasi menggunakan metrik **Genre Similarity Average** 
+ 
+   Pendekatan ini terbukti efektif dalam menyaring dan merekomendasikan anime berdasarkan kemiripan genre dengan cara yang terukur dan transparan. 
+ 
+2. **Bagaimana hasil rekomendasi yang dihasilkan dan seberapa relevan rekomendasi tersebut?** 
+   Telah dijawab melalui: 
+ 
+   * Evaluasi genre similarity menunjukkan bahwa anime yang direkomendasikan memiliki kesamaan genre tinggi terhadap anime input 
+   * Rekomendasi yang dihasilkan bersifat personal, relevan, dan konsisten mencerminkan preferensi pengguna berdasarkan genre 
+ 
+--- 
+ 
+**Capaian Goals** 
+ 
+1. **Membangun sistem rekomendasi anime berbasis content-based filtering** 
+   Tercapai. Sistem berhasil dibangun dengan memanfaatkan representasi TF-IDF dari genre anime dan menghitung kemiripan menggunakan cosine similarity. Hasilnya dapat memberikan rekomendasi akurat berbasis kesamaan genre. 
+ 
+2. **Mempercepat proses penemuan anime sesuai preferensi pengguna** 
+   Tercapai. Dengan fungsi rekomendasi otomatis dan perhitungan similarity score, pengguna dapat langsung menerima daftar anime yang mirip dengan yang mereka sukai, menghemat waktu eksplorasi manual. 
+ 
+---
+
+**Dampak dari Solusi yang Dirancang**
+
+* **Content-based filtering** memungkinkan sistem bekerja meskipun tanpa riwayat pengguna
+* Sistem bersifat **transparan** dan dapat dijelaskan, karena rekomendasi berdasarkan kemiripan genre yang terlihat jelas
+* Rekomendasi yang relevan meningkatkan **retensi pengguna**, **kepuasan eksplorasi**, dan potensi penemuan anime baru yang sesuai selera
 
 
+## **6. Summary**
+Model sistem rekomendasi anime yang dikembangkan telah berhasil menjawab seluruh problem statement dan mencapai goals yang ditetapkan. Dari keseluruhan implementasi, **TF-IDF Vectorizer dengan Cosine Similarity** merupakan pendekatan terbaik untuk diterapkan pada dataset anime ini karena memiliki tingkat akurasi rekomendasi yang sangat tinggi, yaitu **Genre Similarity Average sebesar 85.6%** dan **Similarity Score konsisten di atas 0.82** untuk semua rekomendasi.
+Secara keseluruhan, evaluasi menunjukkan bahwa solusi content-based filtering yang diimplementasikan berdampak positif terhadap kualitas rekomendasi dan relevansi hasil yang diberikan kepada pengguna, serta layak digunakan sebagai alat bantu dalam sistem rekomendasi anime berbasis kesamaan genre di platform streaming atau database anime.
 
-
+## **7. Reference**
+[1] Fajriansyah, M., Adikara, P. P., & Widodo, A. W. (2021). Sistem Rekomendasi Film Menggunakan Content Based Filtering. Jurnal Pengembangan Teknologi Informasi Dan Ilmu Komputer, 5(6), 2188–2199. Diakses dari https://j-ptiik.ub.ac.id/index.php/j-ptiik/article/view/9163. Diakses pada 27 Mei 2025, Pukul 00.14.
+[2] Reddy, S. R. S., Nalluri, S., Kunisetti, S., Ashok, S., & Venkatesh, B. (2019). Content-based movie recommendation system using genre correlation. In S. C. Satapathy, V. Bhateja, & S. Das (Eds.), Smart intelligent computing and applications: Proceedings of the Second International Conference on SCI 2018 (Vol. 2, pp. 391–397). Springer. DOI: 10.1007/978-981-13-1927-3_42. Diakses pada 28 Mei 2025, Pukul 10.33.
 
