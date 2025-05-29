@@ -669,5 +669,6 @@ Secara keseluruhan, evaluasi menunjukkan bahwa solusi content-based filtering ya
 
 ## **7. Reference**
 [1] Fajriansyah, M., Adikara, P. P., & Widodo, A. W. (2021). Sistem Rekomendasi Film Menggunakan Content Based Filtering. Jurnal Pengembangan Teknologi Informasi Dan Ilmu Komputer, 5(6), 2188–2199. Diakses dari https://j-ptiik.ub.ac.id/index.php/j-ptiik/article/view/9163. Diakses pada 27 Mei 2025, Pukul 00.14.
+
 [2] Reddy, S. R. S., Nalluri, S., Kunisetti, S., Ashok, S., & Venkatesh, B. (2019). Content-based movie recommendation system using genre correlation. In S. C. Satapathy, V. Bhateja, & S. Das (Eds.), Smart intelligent computing and applications: Proceedings of the Second International Conference on SCI 2018 (Vol. 2, pp. 391–397). Springer. DOI: 10.1007/978-981-13-1927-3_42. Diakses pada 28 Mei 2025, Pukul 10.33.
 
