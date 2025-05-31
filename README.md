@@ -204,13 +204,18 @@ Diagram diatas merupakan analisis dan menampilkan Distribusi Rata-rata Skor per 
 
 ## **4. Data Preparation**
 ##### Handling Missing Value
-Sebagaimana setelah melakukan pengecekan data dapat kita lihat bahwa ada 9 data yang mengalami missing value sehingga diperlukan adanya penghapusan data duplikat menggunakan fungsi `df.isnull().sum()`
+Sebagaimana setelah melakukan pengecekan data dapat kita lihat bahwa ada 9 data yang mengalami missing value sehingga diperlukan adanya penghapusan missing value dengan meng menggunakan fungsi `df.dropna()`
+
+![image](https://github.com/user-attachments/assets/3034f925-9390-4fc6-82f8-d8e676e1b626)
+
 ```
-missing_values_after = df.isnull().sum()
-print("Missing values after potential handling:")
-missing_values_after
+df = df.dropna()
+
+print(f"Dataset sekarang: {df.shape}")
+print(f"Missing values: {df.isnull().sum().sum()}")
 ```
-![image](https://github.com/user-attachments/assets/7dd6bf12-3e9b-4f1e-8a03-fae0fd5d4927)
+
+
 
 #### Text Preprocessing
 Pada tahap ini saya membuat fungsi clean_title() untuk membersihkan judul anime dari karakter khusus menggunakan re.sub() dengan regex pattern yang hanya menyisakan huruf, angka, dan spasi. Fungsi ini diterapkan ke seluruh kolom 'Title' menggunakan apply() untuk menghilangkan simbol-simbol seperti tanda baca, karakter unicode, atau tanda khusus lainnya. Hasilnya adalah judul yang lebih bersih dan konsisten untuk analisis lebih lanjut.
@@ -248,11 +253,6 @@ print(num_col)
 print("\nKolom Kategorikal:")
 print(cat_col)
 ```
-
-## **5. Model and Result**
-#### Content-based Filtering
-
-Pada tahapan modeling ini, akan digunakan sistem rekomendasi berdasarkan pendekatan Content-Based Filtering dimana nantinya sistem akan merekomendasikan judul anime dyang memiliki kesamaan genre dengan judul anime yang diinginkan oleh user. Sistem akan menampilkan 5 judul anime dengan kemiripan genre yang sama dengan judul anime pilihan pengguna.
 
 #### TF-IDF
 
@@ -335,7 +335,8 @@ print(f"Jumlah fitur genre: {len(feature_names)}")
 print("Contoh fitur genre:")
 print(feature_names[:20])
 ```
-![image](https://github.com/user-attachments/assets/1cb84032-80ae-4e70-baa3-1045219ebdf2)
+![image](https://github.com/user-attachments/assets/588de83c-9c52-4664-94dd-8db33338e5d7)
+
 
 ---
 ```
@@ -343,7 +344,8 @@ print(feature_names[:20])
 tfidf_matrix = vectorizer.fit_transform(df['Genres'])
 print(f"Dimensi TF-IDF matrix: {tfidf_matrix.shape}")
 ```
-![image](https://github.com/user-attachments/assets/df4fd51b-d4de-4d69-bdc8-1c992e6bd5a5)
+![image](https://github.com/user-attachments/assets/b58696aa-3df1-451d-b387-a442da0bb8c3)
+
 
 ---
 ```
@@ -359,17 +361,22 @@ print("Sample TF-IDF Matrix:")
 sample_df = tfidf_dataframe.sample(n=min(15, len(tfidf_dataframe)), axis=1).sample(n=min(8, len(tfidf_dataframe)), axis=0)
 sample_df
 ```
-![image](https://github.com/user-attachments/assets/7fdfa0a9-efd4-4e2e-9b55-648140b7d78f)
+![image](https://github.com/user-attachments/assets/b1556868-cd90-48de-b094-369366418c74)
+
 
 ---
+
+
+## **5. Model and Result**
+#### Content-based Filtering
+
+Pada tahapan modeling ini, akan digunakan sistem rekomendasi berdasarkan pendekatan Content-Based Filtering dimana nantinya sistem akan merekomendasikan judul anime dyang memiliki kesamaan genre dengan judul anime yang diinginkan oleh user. Sistem akan menampilkan 5 judul anime dengan kemiripan genre yang sama dengan judul anime pilihan pengguna.
 
 #### Cosine Similarity
 **Cosine Similarity Matrix Computation** adalah proses perhitungan kesamaan antar dokumen (anime) berdasarkan representasi TF-IDF genre menggunakan metrik cosine similarity, kemudian mengkonversinya menjadi DataFrame untuk analisis dan visualisasi yang lebih mudah. Proses ini menghasilkan matrix simetris yang menunjukkan tingkat kesamaan genre antar anime dengan nilai berkisar dari 0 (tidak sama) hingga 1 (identik).
 
 Proses Kerja Perhitungan:
-
-- Matrix Input Processing: Menggunakan TF-IDF matrix sebagai input untuk perhitungan cosine similarity
-- Cosine Calculation: Menghitung cosine angle antara setiap pasangan vector anime dalam ruang TF-IDF
+-  Fitur genre yang telah diproses dengan TF-IDF digunakan bersama dengan Cosine Similarity untuk membangun model rekomendasi.
 - Similarity Matrix Generation: Membuat matrix simetris n×n dimana n adalah jumlah anime
 - Normalization: Hasil similarity dinormalisasi dalam rentang 0-1 berdasarkan cosine angle
 - DataFrame Conversion: Mengkonversi numpy array menjadi DataFrame pandas dengan proper indexing
@@ -563,97 +570,131 @@ get_anime_recommendations('Shingeki no Kyojin')
 
 ## **5. Evaluation**
 ### Evaluasi Hasil
-Evaluasi model yang dilakukan untuk prediksi data ini menggunakan metrik berupa ***Cosine Similarity dan Avarage Genre Similarity***
+Evaluasi model yang dilakukan untuk prediksi data ini menggunakan metrik berupa **MRR**
+Pada tahapan evaluasi ini, saya membuat fungsi yang dinamakan `compute_mrr()` untuk 
+mengevaluasi kualitas sistem rekomendasi anime dan mendapatkan skor Mean Reciprocal Rank (MRR) 
+dari anime yang direkomendasikan oleh sistem.
+
+Fungsi tdari fungsi tersebut untuk mengambil sampel anime sebagai query, mendapatkan rekomendasi top-K menggunakan 
+fungsi sistem rekomendasi, lalu menghitung relevansi antara anime query dengan setiap 
+rekomendasi menggunakan `is_relevant()` berdasarkan overlap genre. Hasilnya ditampilkan 
+dalam bentuk dictionary dengan metrik MRR@K, standar deviasi, dan jumlah anime yang 
+diuji sebagai indikator kualitas rekomendasi.
+
+Fungsi `is_relevant()` mengevaluasi relevansi berdasarkan persentase genre yang sama 
+antara anime query dan anime kandidat rekomendasi, dengan threshold default 0.5 (50% overlap).
+MRR menghitung posisi rata-rata terbalik dari rekomendasi relevan pertama, dimana skor 
+yang lebih tinggi menunjukkan sistem yang lebih baik dalam menempatkan anime relevan 
+di posisi atas daftar rekomendasi.
 
 | **Aspek**                | **Penjelasan**                                                                                      |
 |--------------------------|-----------------------------------------------------------------------------------------------------|
-| **Cosine Similarity**    | Mengukur kesamaan genre antara anime target dengan anime yang direkomendasikan.                 |
-|                          | Range nilai: 0-1 (0 = tidak mirip, 1 = identik).                                                   |
-|                          | Dihitung menggunakan `cosine_similarity(target_vector, vectors_rec)`.                            |
-| **Average Genre Similarity** | Rata-rata cosine similarity dari semua rekomendasi yang diberikan.                          |
-|                          | Dikonversi ke persentase untuk interpretasi yang lebih mudah.                                      |
-|                          | menggunakan fungsi `genre_similarities.mean() * 100`.                                                          |
-| **Kelebihan**            | Sesuai dengan problem statement (rekomendasi berdasarkan genre).                                |
-|                          | Mudah diinterpretasi.                                                                               |
-|                          | Memberikan feedback langsung tentang kualitas sistem.                                               |
-| **Keterbatasan**         | Hanya fokus pada genre, tidak mempertimbangkan rating atau popularitas.                         |
-|                          | Tidak ada ground truth untuk validasi objektif.                                                     |
-```
-def evaluate_recommendations(anime_title, tfidf_matrix, df, similarity_df):
-    if anime_title not in df['Title'].values:
-        return f"Anime '{anime_title}' tidak ditemukan dalam dataset."
-
-    # Ambil index & vektor TF-IDF dari anime target
-    idx_target = df[df['Title'] == anime_title].index[0]
-    target_vector = tfidf_matrix[idx_target]
-
-    # Dapatkan rekomendasi
-    recommendations = get_anime_recommendations(anime_title, similarity_data=similarity_df, anime_data=df[['Title', 'Genres', 'Score']], num_recommendations=5)
-    
-    # Filter out jika rekomendasi kosong atau semua dari seri/franchise yang sama
-    if recommendations.empty:
-        return "Rekomendasi kosong."
-    
-    # Ambil index rekomendasi dalam tfidf_matrix
-    indices_rec = df[df['Title'].isin(recommendations['Title'])].index
-    vectors_rec = tfidf_matrix[indices_rec]
-
-    # Hitung cosine similarity genre antar vektor
-    genre_similarities = cosine_similarity(target_vector, vectors_rec)[0]
-
-    # Tambahkan skor ke dataframe hasil
-    recommendations['Genre_Similarity'] = [round(score, 2) for score in genre_similarities]
-    
-    # Hitung rata-rata similarity sebagai "akurasi"
-    average_score = round(genre_similarities.mean() * 100, 2)
-    print(f" Genre Similarity Average: {average_score}%")
-
-    return recommendations
+| **Genre Overlap**        | Mengukur kesamaan genre antara anime target dengan anime yang direkomendasikan.                   |
+|                          | Menggunakan Jaccard similarity: overlap / total_unique_genres dari query.                         |
+|                          | Dihitung menggunakan `len(overlap) / len(query_set)` dengan threshold relevance 0.5.             |
+| **Mean Reciprocal Rank** | Rata-rata posisi terbalik dari rekomendasi relevan pertama dalam top-K.                           |
+|                          | Range nilai: 0-1 (1 = relevan di posisi 1, mendekati 0 = tidak ada yang relevan).                |
+|                          | Dihitung menggunakan formula `1/rank` dimana rank adalah posisi rekomendasi relevan pertama.      |
+| **Kelebihan**            | Sesuai dengan problem statement (rekomendasi berdasarkan genre).                                  |
+|                          | Mudah diinterpretasi dan memberikan ranking quality assessment.                                    |
+|                          | Memberikan feedback langsung tentang posisi rekomendasi relevan.                                  |
+| **Keterbatasan**         | Hanya fokus pada genre, tidak mempertimbangkan rating atau popularitas.                           |
+|                          | Menggunakan sampling terbatas untuk evaluasi (default n_test=10).                                 |
+|                          | Threshold relevance bersifat subjektif dan dapat mempengaruhi hasil evaluasi.                     |
+"""
 
 ```
-Untuk melakukan evaluasi dan melihat akurasi judul anime yang direkomendasikan dapat dilakukan dengan mengisi judul anime yang diinginkan dan memanggil fungsi `evaluate_recommendations("Judul Anime", tfidf_matrix, df, similarity_df)`
+def is_relevant(query_genres, candidate_genres, threshold=0.5):
+    """Check if two anime are relevant based on genre overlap."""
+    query_set = set(query_genres.lower().split(', '))
+    candidate_set = set(candidate_genres.lower().split(', '))
+    overlap = query_set & candidate_set
+    if not query_set:
+        return False
+    return len(overlap) / len(query_set) >= threshold
 
-contoh :
 ```
-evaluate_recommendations("Shingeki no Kyojin", tfidf_matrix, df, similarity_df)
+```
+def compute_mrr(df, similarity_df, get_recommendations_func, K=10, relevance_threshold=0.5, n_test=10):
+    rr_list = []
+    tested_titles = []
+
+    # Sampling judul anime sebagai query
+    test_titles = df['Title'].sample(n=min(n_test, len(df)), random_state=42)
+
+    for title in test_titles:
+        try:
+            # Ambil rekomendasi top-K
+            recs = get_recommendations_func(title, similarity_df, df[['Title', 'Genres']], num_recommendations=K)
+        except:
+            continue
+
+        if recs.empty:
+            continue
+
+        query_genres = df.loc[df['Title'] == title, 'Genres'].values[0]
+
+        rr = 0
+        for i, row in enumerate(recs.itertuples(), start=1):
+            if is_relevant(query_genres, row.Genres, threshold=relevance_threshold):
+                rr = 1 / i
+                break
+
+        rr_list.append(rr)
+        tested_titles.append(title)
+
+    return {
+        f'MRR@{K}': round(sum(rr_list) / len(rr_list), 4),
+        'Standard Deviation (MRR)': round(np.std(rr_list), 4),
+        'Jumlah anime diuji': len(rr_list),
+        'Judul anime diuji': tested_titles
+    }
+```
+```
+result = compute_mrr(df, similarity_df, get_anime_recommendations, K=10)
+
+# Tampilkan hasil
+print("==== Evaluasi MRR ====")
+for k, v in result.items():
+    if k != 'Judul anime diuji':
+        print(f"{k}: {v}")
 ```
 Hasil Output : 
-
-![image](https://github.com/user-attachments/assets/aa96c007-2942-478d-9f8f-97be5f4cca9e)
+![image](https://github.com/user-attachments/assets/faa67f1f-8be6-4cbb-b4d3-02e05f2c0562)
 
 ---
 
- 
-### **Evaluasi Bisnis** 
- 
-**Problem Solving** 
- 
-1. **Bagaimana cara membangun sistem rekomendasi yang membantu penonton menemukan anime sesuai preferensi mereka?** 
-   Problem berhasil dijawab melalui pengembangan sistem rekomendasi berbasis content-based filtering dengan pendekatan berikut: 
- 
-   * Representasi data genre dalam bentuk numerik menggunakan **TF-IDF Vectorizer** 
-   * Pengukuran kesamaan antar anime dengan **Cosine Similarity** 
-   * Implementasi fungsi **`get_anime_recommendations()`** untuk menghasilkan top-N rekomendasi anime berdasarkan input judul 
-   * Evaluasi sistem rekomendasi menggunakan metrik **Genre Similarity Average** 
- 
-   Pendekatan ini terbukti efektif dalam menyaring dan merekomendasikan anime berdasarkan kemiripan genre dengan cara yang terukur dan transparan. 
- 
-2. **Bagaimana hasil rekomendasi yang dihasilkan dan seberapa relevan rekomendasi tersebut?** 
-   Telah dijawab melalui: 
- 
-   * Evaluasi genre similarity menunjukkan bahwa anime yang direkomendasikan memiliki kesamaan genre tinggi terhadap anime input 
-   * Rekomendasi yang dihasilkan bersifat personal, relevan, dan konsisten mencerminkan preferensi pengguna berdasarkan genre 
- 
---- 
- 
-**Capaian Goals** 
- 
-1. **Membangun sistem rekomendasi anime berbasis content-based filtering** 
-   Tercapai. Sistem berhasil dibangun dengan memanfaatkan representasi TF-IDF dari genre anime dan menghitung kemiripan menggunakan cosine similarity. Hasilnya dapat memberikan rekomendasi akurat berbasis kesamaan genre. 
- 
-2. **Mempercepat proses penemuan anime sesuai preferensi pengguna** 
-   Tercapai. Dengan fungsi rekomendasi otomatis dan perhitungan similarity score, pengguna dapat langsung menerima daftar anime yang mirip dengan yang mereka sukai, menghemat waktu eksplorasi manual. 
- 
+
+### **Evaluasi Bisnis**
+
+**Problem Solving**
+
+1. **Bagaimana cara membangun sistem rekomendasi yang membantu penonton menemukan anime sesuai preferensi mereka?**
+   Problem berhasil dijawab melalui pengembangan sistem rekomendasi berbasis content-based filtering dengan pendekatan berikut:
+
+   * Representasi data genre dalam bentuk numerik menggunakan **TF-IDF Vectorizer**
+   * Pengukuran kesamaan antar anime dengan **Cosine Similarity**
+   * Implementasi fungsi **`get_anime_recommendations()`** untuk menghasilkan top-N rekomendasi anime berdasarkan input judul
+   * Evaluasi sistem rekomendasi menggunakan metrik **MRR@k**
+
+   Pendekatan ini terbukti efektif dalam menyaring dan merekomendasikan anime berdasarkan kemiripan genre dengan cara yang terukur dan transparan.
+
+2. **Bagaimana hasil rekomendasi yang dihasilkan dan seberapa relevan rekomendasi tersebut?**
+   Telah dijawab melalui:
+
+   * Evaluasi menggunakan MRR@10 yang mengukur kualitas ranking rekomendasi berdasarkan relevansi genre
+   * Hasil evaluasi menunjukkan posisi rata-rata rekomendasi relevan dalam top-K, memberikan insight tentang efektivitas sistem
+
+---
+
+**Capaian Goals**
+
+1. **Membangun sistem rekomendasi anime berbasis content-based filtering**
+   Tercapai. Sistem berhasil dibangun dengan memanfaatkan representasi TF-IDF dari genre anime dan menghitung kemiripan menggunakan cosine similarity. Hasil evaluasi MRR menunjukkan sistem dapat memberikan rekomendasi yang relevan berdasarkan kesamaan genre.
+
+2. **Mempercepat proses penemuan anime sesuai preferensi pengguna**
+   Tercapai. Dengan fungsi rekomendasi otomatis yang menghasilkan top-N suggestions dalam waktu cepat, pengguna dapat langsung menerima daftar anime yang mirip dengan yang mereka sukai, menghemat waktu eksplorasi manual dan meningkatkan efisiensi discovery.
+
 ---
 
 **Dampak dari Solusi yang Dirancang**
@@ -661,6 +702,8 @@ Hasil Output :
 * **Content-based filtering** memungkinkan sistem bekerja meskipun tanpa riwayat pengguna
 * Sistem bersifat **transparan** dan dapat dijelaskan, karena rekomendasi berdasarkan kemiripan genre yang terlihat jelas
 * Rekomendasi yang relevan meningkatkan **retensi pengguna**, **kepuasan eksplorasi**, dan potensi penemuan anime baru yang sesuai selera
+
+
 
 
 ## **6. Summary**
