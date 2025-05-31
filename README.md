@@ -57,7 +57,7 @@ Dataset yang digunakan merupakan dataset berjudul "Anime Data"  yang dapat diaks
 * Terdapat missing value pada kolom Rating sebanyak 9 baris
 
 **Fitur yang terdapat pada setiap kolom dataset**:
- 
+
 | Kolom             | Deskripsi                                                                                        |
 |-------------------|--------------------------------------------------------------------------------------------------|
 | Title             | Nama resmi anime sebagai identitas utama                                                       |
@@ -71,7 +71,13 @@ Dataset yang digunakan merupakan dataset berjudul "Anime Data"  yang dapat diaks
 | Producers         | Perusahaan atau pihak yang memproduksi anime                                                         |
 | Licensors         | Pihak yang memegang lisensi tayang anime di luar Jepang                                                   |
 | Studios           | Studio animasi yang membuat anime tersebut                                                             |
-
+| Sources           | Sumber Materi Anime (Manga,Original,Light Novel)                                                            |
+| Genre           | Daftar genre anime                                                             |
+| Rating           | Rating usia/ Konten Anime (G (general),PG(Parental Guaidance),PG-14,R-17+)                 |
+| Score           | Rating numerik anime (kemungkinan skala 1-10)                                                             |
+| Scored By           | Jumlah user yang memberikan rating                 |
+| Members           | Jumlah user yang menambahkan anime ke dalam list mereka                                                             |
+| Favorites           | Jumlah user yang menandai anime sebagai favorite                 |
 Pada fitur fitur dalam dataset Anime Data terdapat 16 Kolom bertipe data object (Data Kategorikal), 1 Kolom bertipe data float dan 3 kolom bertipe data integer (Data Numerikal).
 
 ### Exploratory Data Analysis (EDA)
