@@ -447,7 +447,8 @@ Implementasi:
 similarity_matrix = cosine_similarity(tfidf_matrix)
 print(f"Shape similarity matrix: {similarity_matrix.shape}")
 ```
-![image](https://github.com/user-attachments/assets/00de8007-4559-4da3-931f-df5fb34c2e7b)
+![image](https://github.com/user-attachments/assets/dc8c4c6c-cdbb-4583-8781-35d1a8f31359)
+
 
 ---
 ```
@@ -467,7 +468,8 @@ sample_similarity = similarity_df.sample(n=min(6, len(similarity_df)), axis=1).s
 sample_similarity
 ```
 
-![image](https://github.com/user-attachments/assets/15f46c28-b3f8-4f8b-81e7-ec53acbb2009)
+![image](https://github.com/user-attachments/assets/43e1c472-76ff-4cde-905f-81bbe24da0ed)
+
 
 ---
 
@@ -570,9 +572,10 @@ def get_anime_recommendations(anime_title, similarity_data=similarity_df, anime_
 Untuk menjalankan kodenya cukup mengisi judul anime yang diinginkan dan memanggil fungsi get_anime_recommendations() seperti contoh dibawah
 
 ```
-get_anime_recommendations('Shingeki no Kyojin')
+get_anime_recommendations('Naruto')
 ```
-![image](https://github.com/user-attachments/assets/4f39b1ab-28d2-48f5-8013-dfb540dfe040)
+![image](https://github.com/user-attachments/assets/81ca90aa-2238-4491-b77c-be756f722f1b)
+
 
 ---
 
@@ -610,7 +613,7 @@ di posisi atas daftar rekomendasi.
 | **Keterbatasan**         | Hanya fokus pada genre, tidak mempertimbangkan rating atau popularitas.                           |
 |                          | Menggunakan sampling terbatas untuk evaluasi (default n_test=10).                                 |
 |                          | Threshold relevance bersifat subjektif dan dapat mempengaruhi hasil evaluasi.                     |
-"""
+
 
 ```
 def is_relevant(query_genres, candidate_genres, threshold=0.5):
@@ -655,23 +658,24 @@ def compute_mrr(df, similarity_df, get_recommendations_func, K=10, relevance_thr
     return {
         f'MRR@{K}': round(sum(rr_list) / len(rr_list), 4),
         'Standard Deviation (MRR)': round(np.std(rr_list), 4),
-        'Jumlah anime diuji': len(rr_list),
+        # 'Jumlah anime diuji' akan dihapus dari hasil
         'Judul anime diuji': tested_titles
     }
 ```
 ```
 result = compute_mrr(df, similarity_df, get_anime_recommendations, K=10)
-
-# Tampilkan hasil
 print("==== Evaluasi MRR ====")
 for k, v in result.items():
     if k != 'Judul anime diuji':
         print(f"{k}: {v}")
 ```
 Hasil Output : 
-![image](https://github.com/user-attachments/assets/faa67f1f-8be6-4cbb-b4d3-02e05f2c0562)
+![image](https://github.com/user-attachments/assets/4a3e34b0-9652-4118-ac24-99fe8b325806)
 
 ---
+Hasil Interpretasi Evaluasi MRR
+* Performa sistem sangat baik (mendekati 1.0) di angka 0,8
+* Konsistensi cukup baik untuk standar deviasi di angka 0,3
 
 
 ### **Evaluasi Bisnis**
