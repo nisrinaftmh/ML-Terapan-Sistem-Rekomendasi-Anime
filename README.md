@@ -327,7 +327,6 @@ Implementasi:
 - **Matrix Conversion**: todense() mengkonversi sparse matrix menjadi dense untuk kompatibilitas DataFrame
 - **DataFrame Creation**: pd.DataFrame() membuat struktur tabular dengan titles sebagai index dan features sebagai kolom
 - **Data Sampling**: sample() dengan parameter axis=0 dan axis=1 mengambil subset baris dan kolom secara acak untuk preview
-- **Visualization Ready**: Hasil akhir berupa DataFrame yang siap untuk analisis, visualisasi, dan pemrosesan lebih lanjut
 
   
 ---
