@@ -719,7 +719,8 @@ Hasil Interpretasi Evaluasi MRR
 
 
 ## **6. Summary**
-Model sistem rekomendasi anime yang dikembangkan telah berhasil menjawab seluruh problem statement dan mencapai goals yang ditetapkan. Dari keseluruhan implementasi, **TF-IDF Vectorizer dengan Cosine Similarity** merupakan pendekatan terbaik untuk diterapkan pada dataset anime ini karena memiliki tingkat akurasi rekomendasi yang sangat tinggi, yaitu **Genre Similarity Average sebesar 85.6%** dan **Similarity Score konsisten di atas 0.82** untuk semua rekomendasi.
+Model sistem rekomendasi anime yang dikembangkan telah berhasil menjawab seluruh problem statement dan mencapai goals yang ditetapkan. Dari keseluruhan implementasi, **TF-IDF Vectorizer dengan Cosine Similarity** merupakan pendekatan terbaik untuk diterapkan pada dataset anime ini karena memiliki tingkat akurasi rekomendasi yang sangat tinggi pada bagian Top 5 Recommendation bahwa rekomendasi anime uyang diberikan memiliki similarity score yang tinggi dan konsisten di angka 0,9 pada rekomendasi anime dengan genre yang sama pada anime Naruto. Selain itu berdasahkan hasil evaluasi menggunakan MRR@K model memiliki performa sistem yang baik dimana memiliki akurasi sebesar 0,8 dan konsistensi standar deviasi yang cukup baik di angka 0,3.
+
 Secara keseluruhan, evaluasi menunjukkan bahwa solusi content-based filtering yang diimplementasikan berdampak positif terhadap kualitas rekomendasi dan relevansi hasil yang diberikan kepada pengguna, serta layak digunakan sebagai alat bantu dalam sistem rekomendasi anime berbasis kesamaan genre di platform streaming atau database anime.
 
 ## **7. Reference**
