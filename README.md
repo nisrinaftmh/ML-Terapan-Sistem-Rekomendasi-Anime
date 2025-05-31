@@ -78,6 +78,7 @@ Dataset yang digunakan merupakan dataset berjudul "Anime Data"  yang dapat diaks
 | Scored By           | Jumlah user yang memberikan rating                 |
 | Members           | Jumlah user yang menambahkan anime ke dalam list mereka                                                             |
 | Favorites           | Jumlah user yang menandai anime sebagai favorite                 |
+| Description           | Sinopsis cerita dari judul anime                 |
 
 
 Pada fitur fitur dalam dataset Anime Data terdapat 16 Kolom bertipe data object (Data Kategorikal), 1 Kolom bertipe data float dan 3 kolom bertipe data integer (Data Numerikal).
