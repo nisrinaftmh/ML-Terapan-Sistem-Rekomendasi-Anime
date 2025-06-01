@@ -378,7 +378,7 @@ sample_df
 ---
 
 
-## **5. Model and Result**
+## **5. Modeling and Result**
 #### Content-based Filtering
 
 Pada tahapan modeling ini, akan digunakan sistem rekomendasi berdasarkan pendekatan Content-Based Filtering dimana nantinya sistem akan merekomendasikan judul anime dyang memiliki kesamaan genre dengan judul anime yang diinginkan oleh user. Sistem akan menampilkan 5 judul anime dengan kemiripan genre yang sama dengan judul anime pilihan pengguna.
