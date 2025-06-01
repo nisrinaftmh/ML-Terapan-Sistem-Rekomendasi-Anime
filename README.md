@@ -58,6 +58,8 @@ Dataset yang digunakan merupakan dataset berjudul "Anime Data"  yang dapat diaks
 
 **Fitur yang terdapat pada setiap kolom dataset**:
 
+**Fitur yang terdapat pada setiap kolom dataset**:
+
 | Kolom             | Deskripsi                                                                                        |
 |-------------------|--------------------------------------------------------------------------------------------------|
 | Title             | Nama resmi anime sebagai identitas utama                                                       |
@@ -73,6 +75,7 @@ Dataset yang digunakan merupakan dataset berjudul "Anime Data"  yang dapat diaks
 | Studios           | Studio animasi yang membuat anime tersebut                                                             |
 | Sources           | Sumber Materi Anime (Manga,Original,Light Novel)                                                            |
 | Genre           | Daftar genre anime                                                             |
+| Duration           | Informasi durasi anime yang ditayangkan                                                              |
 | Rating           | Rating usia/ Konten Anime (G (general),PG(Parental Guaidance),PG-14,R-17+)                 |
 | Score           | Rating numerik anime (kemungkinan skala 1-10)                                                             |
 | Scored By           | Jumlah user yang memberikan rating                 |
